@@ -1,5 +1,11 @@
-from enum import StrEnum, auto
+from enum import Enum, auto
 from typing import Any
+
+
+class StrEnum(str, Enum):
+    """Custom StrEnum implementation for Python 3.10 compatibility."""
+    def _generate_next_value_(name, start, count, last_values):
+        return name
 
 
 class InferenceDevice(StrEnum):
