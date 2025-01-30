@@ -6,6 +6,7 @@ from polygraphy.backend.trt import (
     EngineFromNetwork,
     NetworkFromOnnxPath,
     SaveEngine,
+    TrtRunner,
 )
 
 
@@ -14,8 +15,13 @@ from polygraphy.backend.trt import (
 @click.option("--fp16", is_flag=True, help="Enable FP16 precision")
 def build_tensorrt_engine(onnx_path: Path, fp16: bool):
     """Build and save a TensorRT engine from an ONNX model."""
+    #check if file exists
+    if not onnx_path.exists():
+        click.echo(f"File {onnx_path} does not exist")
+        return
     build_engine = EngineFromNetwork(NetworkFromOnnxPath(str(onnx_path)), config=CreateConfig(fp16=fp16))
     SaveEngine(build_engine, str(onnx_path.with_suffix(".engine")))
+    TrtRunner(build_engine).activate()
     click.echo(f"Engine saved at {onnx_path.with_suffix('.engine')}")
 
 
